@@ -1,0 +1,23 @@
+from fastapi import APIRouter
+from app.api.v1.endpoints import auth, analysis, upload, reports, batch, users, admin, webhooks, notifications, api_keys, comparison, tags, health, export, realtime, forensics, dashboard, models, settings as settings_ep
+
+router = APIRouter()
+router.include_router(auth.router, prefix="/auth", tags=["Authentication"])
+router.include_router(analysis.router, prefix="/analysis", tags=["Analysis"])
+router.include_router(upload.router, prefix="/upload", tags=["Upload"])
+router.include_router(reports.router, prefix="/reports", tags=["Reports"])
+router.include_router(batch.router, prefix="/batch", tags=["Batch Processing"])
+router.include_router(users.router, prefix="/users", tags=["Users"])
+router.include_router(admin.router, prefix="/admin", tags=["Administration"])
+router.include_router(webhooks.router, prefix="/webhooks", tags=["Webhooks"])
+router.include_router(notifications.router, prefix="/notifications", tags=["Notifications"])
+router.include_router(api_keys.router, prefix="/api-keys", tags=["API Keys"])
+router.include_router(comparison.router, prefix="/comparison", tags=["Comparison"])
+router.include_router(tags.router, prefix="/tags", tags=["Tags"])
+router.include_router(health.router, prefix="/health", tags=["Health"])
+router.include_router(export.router, prefix="/export", tags=["Export"])
+router.include_router(realtime.router, prefix="/realtime", tags=["Real-time"])
+router.include_router(forensics.router, prefix="/forensics", tags=["Forensics"])
+router.include_router(dashboard.router, prefix="/dashboard", tags=["Dashboard"])
+router.include_router(models.router, prefix="/models", tags=["ML Models"])
+router.include_router(settings_ep.router, prefix="/settings", tags=["Settings"])

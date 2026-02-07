@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: deepfake-api
+  namespace: deepfake-detector
+spec:
+  replicas: 3
+  selector:
+    matchLabels: {app: deepfake-detector, component: api}
+  template:
+    metadata:
+      labels: {app: deepfake-detector, component: api}
+    spec:
+      containers:
+        - name: api
+          image: deepfake-detector/api:latest
+          ports: [{containerPort: 8000}]
+          resources:
+            requests: {cpu: "500m", memory: "2Gi"}
+            limits: {cpu: "2", memory: "8Gi"}
+          readinessProbe: {httpGet: {path: /health/ready, port: 8000}, initialDelaySeconds: 30}
+          livenessProbe: {httpGet: {path: /health/live, port: 8000}, initialDelaySeconds: 60}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: deepfake-api
+  namespace: deepfake-detector
+spec:
+  type: ClusterIP
+  selector: {app: deepfake-detector, component: api}
+  ports: [{port: 8000, targetPort: 8000}]
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: deepfake-api-hpa
+  namespace: deepfake-detector
+spec:
+  scaleTargetRef: {apiVersion: apps/v1, kind: Deployment, name: deepfake-api}
+  minReplicas: 2
+  maxReplicas: 10
+  metrics:
+    - type: Resource
+      resource: {name: cpu, target: {type: Utilization, averageUtilization: 70}}
